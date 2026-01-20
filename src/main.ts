@@ -6,7 +6,7 @@ import "toastify-js/src/toastify.css";
 
 const loader: string = '<div id="rtms-start-loader" class="flex justify-center"><div class="h-6 w-6 mr-[5px] animate-spin rounded-full border-4 border-solid border-white border-t-transparent"></div>';
 
-// You should sign your JWT with a backend service in a production use-case
+// !!You should sign your JWT with a backend service in a production use-case!!
 const sdkKey = import.meta.env.VITE_SDK_KEY as string;
 const sdkSecret = import.meta.env.VITE_SDK_SECRET as string;
 

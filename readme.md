@@ -8,7 +8,7 @@ The [Zoom Video SDK for web](https://developers.zoom.us/docs/video-sdk/web/) ena
 
 To get started, clone the repo:
 
-`git clone https://github.com/zoom/videosdk-sentiment-analysis-sample.git`
+`git clone https://github.com/zoom/zoom-rtms-sentiment-sample.git`
 
 ## Setup
 
@@ -16,26 +16,27 @@ To get started, clone the repo:
 
    `bun install # or npm install`
 
-1. Create a `.env` file in the root directory of the project, you can do this by copying the `.env.example` file (`cp .env.example .env`) and replacing the values with your own. The `.env` file should look like this, with your own Zoom Video SDK key and secret:
+1. Create a `.env` file in the root directory of the project, you can do this by copying the `.env.example` file (`cp .env.example .env`) and replacing the values with your own. The `.env` file should look like this, with your own Zoom Video SDK Credentials:
 
    ```
    VITE_SDK_KEY=abc123XXXXXXXXXX
    VITE_SDK_SECRET=abc123XXXXXXXXXX
+   ZM_RTMS_CLIENT=abc123XXXXXXXXXX
+   ZM_RTMS_SECRET=abc123XXXXXXXXXX
+   ZOOM_SECRET_TOKEN=abc123XXXXXXXXXX
    ```
 
-   Add your Zoom Video SDK key and secret to the `.env` file.
+2. Run the app:
 
-1. Run the app:
-
-   `npm run dev`
+   `npm run dev` or `bun dev`
 
 ## Usage
 
 1. Navigate to http://localhost:5173
 
-1. Click "Join" to join the session
+2. Click "Join" to join the session
 
-1. As you speak, you'll see closed captions displayed on your video and screenshare.
+3. As you speak, the server will receive RTMS Webhooks containing the transcripts of your speech. The server will then perform a sentiment detection on the text and output a result to the server console
 
 For the full list of features and event listeners, as well as additional guides, see our [Video SDK docs](https://developers.zoom.us/docs/video-sdk/web/).
 
