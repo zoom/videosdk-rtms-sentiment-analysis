@@ -1,4 +1,4 @@
-# Video SDK Web - Sentiment Analysis
+# Video SDK Web - RTMS - Sentiment Analysis
 
 Use of this sample app is subject to our [Terms of Use](https://explore.zoom.us/en/video-sdk-terms/).
 
