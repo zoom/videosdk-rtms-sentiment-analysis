@@ -10,7 +10,9 @@ To get started, clone the repo:
 
 `git clone https://github.com/zoom/zoom-rtms-sentiment-sample.git`
 
-This app requires Node Version 22.22.0 or below.
+This app requires Node Version 22.22.0 or below. You can install it to your project environment using this command:
+
+`nvm install 22`
 
 ## Setup
 
