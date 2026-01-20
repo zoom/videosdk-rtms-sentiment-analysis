@@ -10,13 +10,15 @@ To get started, clone the repo:
 
 `git clone https://github.com/zoom/zoom-rtms-sentiment-sample.git`
 
+This app requires Node Version 22.22.0 or below.
+
 ## Setup
 
 1. Install the dependencies:
 
    `bun install # or npm install`
 
-1. Create a `.env` file in the root directory of the project, you can do this by copying the `.env.example` file (`cp .env.example .env`) and replacing the values with your own. The `.env` file should look like this, with your own Zoom Video SDK Credentials:
+2. Create a `.env` file in the root directory of the project, you can do this by copying the `.env.example` file (`cp .env.example .env`) and replacing the values with your own. The `.env` file should look like this, with your own Zoom Video SDK Credentials:
 
    ```
    VITE_SDK_KEY=abc123XXXXXXXXXX
@@ -26,7 +28,7 @@ To get started, clone the repo:
    ZOOM_SECRET_TOKEN=abc123XXXXXXXXXX
    ```
 
-2. Run the app:
+3. Run the app:
 
    `npm run dev` or `bun dev`
 
