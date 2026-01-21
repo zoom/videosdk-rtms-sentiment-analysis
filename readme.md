@@ -26,6 +26,7 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
    VITE_SDK_KEY=abc123XXXXXXXXXX
    VITE_SDK_SECRET=abc123XXXXXXXXXX
    ZOOM_SECRET_TOKEN=abc123XXXXXXXXXX
+   PORT=3000
    WORD_THRESHOLD=100
    ```
 
