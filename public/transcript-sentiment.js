@@ -73,8 +73,6 @@ const runDetection = async (transcript) => {
 };
 
 const trainModel = async (sampleSize, epochs) => {
-    console.log(`Please wait. Training the model...`);
-
     //train and save model to browser indexeddb
     try {
         const data = fs.readFileSync('./models//emotions.tsv', 'utf8');
@@ -164,7 +162,7 @@ const trainModel = async (sampleSize, epochs) => {
                    if (process.stdout.isTTY) {
                         process.stdout.clearLine();
                         process.stdout.cursorTo(0);
-                        process.stdout.write(`Training Progress: ${drawProgressBar( ((epoch+1) / epochs) * 100 )}`);
+                        process.stdout.write(`Training Tensorflow Model: ${drawProgressBar( ((epoch+1) / epochs) * 100 )}`);
                     }
                 }
             }
