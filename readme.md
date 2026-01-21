@@ -25,9 +25,8 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
    ```
    VITE_SDK_KEY=abc123XXXXXXXXXX
    VITE_SDK_SECRET=abc123XXXXXXXXXX
-   ZM_RTMS_CLIENT=abc123XXXXXXXXXX
-   ZM_RTMS_SECRET=abc123XXXXXXXXXX
    ZOOM_SECRET_TOKEN=abc123XXXXXXXXXX
+   WORD_THRESHOLD=100
    ```
 
 3. Run the app:
