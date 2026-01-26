@@ -31,11 +31,14 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
    ```
 
 3. Launch the Auth Server by clicking below:
+   
 | Render |
 |:-:|
 | [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Ticorrian-Heard/zoom-rtms-sentiment)
 
-4. Run the app:
+4. Retrieve the Auth URL from the deployed Blueprint and input it into the `.env` file. You can also you an Auth URL of another service of your choice.
+
+5. Run the app:
    `npm run app` or `bun app`
    
 ## Usage
