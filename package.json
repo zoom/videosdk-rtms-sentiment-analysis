@@ -11,6 +11,23 @@
   "engines": {
     "node": "22.22.0"
   },
+  "env": {
+    "ZOOM_VIDEO_SDK_KEY": {
+      "description": "Your Zoom Meeting SDK Secret or Client Key for Video SDK App",
+      "value": "",
+      "required": true
+    },
+    "ZOOM_VIDEO_SDK_SECRET": {
+      "description": "Your Zoom Meeting SDK Secret or Client Secret for Video SDK App",
+      "value": "",
+      "required": true
+    },
+    "ZOOM_SECRET_TOKEN": {
+      "description": "The Secret Token associated with your Video SDK App",
+      "value": "",
+      "required": true
+    }
+  },
   "devDependencies": {
     "@types/toastify-js": "^1.12.4",
     "autoprefixer": "^10.4.16",

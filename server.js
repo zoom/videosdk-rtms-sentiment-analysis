@@ -18,8 +18,8 @@ let transcriptBuffer = "";
 
 if (!ZoomClientId || !ZoomClientSecret || !ZoomSecretToken) {
   console.error('Missing required environment variables:');
-  if (!ZoomClientId) console.error('  - ZOOM_RTMS_CLIENT');
-  if (!ZoomClientSecret) console.error('  - ZOOM_RTMS_SECRET');
+  if (!ZoomClientId) console.error('  - ZOOM_VIDEO_SDK_CLIENT');
+  if (!ZoomClientSecret) console.error('  - ZOOM_VIDEO_SDK_SECRET');
   if (!ZoomSecretToken) console.error('  - ZOOM_SECRET_TOKEN');
   process.exit(1);
 }
