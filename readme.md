@@ -34,7 +34,7 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
    
 | Render |
 |:-:|
-| [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Ticorrian-Heard/zoom-rtms-sentiment)
+| [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/zoom/zoom-rtms-sentiment-sample)
 
 4. Retrieve the Auth URL from the deployed Blueprint and input it into the `.env` file. You can also you an Auth URL of another service of your choice.
 
