@@ -40,7 +40,7 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
 
 | Render |
 |:-:|
-| [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/zoom/zoom-rtms-sentiment)
+| [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Ticorrian-Heard/zoom-rtms-sentiment)
 
 ## Usage
 
