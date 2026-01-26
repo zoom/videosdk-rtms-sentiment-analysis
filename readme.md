@@ -34,6 +34,14 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
 
    `npm run dev` or `bun dev`
 
+
+
+4. Launch the Auth Server by clicking below:
+
+| Render |
+|:-:|
+| [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/zoom/zoom-rtms-sentiment-sample)
+
 ## Usage
 
 1. Navigate to http://localhost:5173
