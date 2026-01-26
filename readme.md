@@ -16,29 +16,18 @@ This app requires Node Version 22.22.0 or below. You can install it to your proj
 
 ## Setup
 
-1. Install the dependencies:
-
-   `bun install # or npm install`
-
-2. Create a `.env` file in the root directory of the project, you can do this by copying the `.env.example` file (`cp .env.example .env`) and replacing the values with your own. The `.env` file should look like this, with your own Zoom Video SDK Credentials:
-
-   ```
-   VITE_SDK_KEY=abc123XXXXXXXXXX
-   VITE_SDK_SECRET=abc123XXXXXXXXXX
-   ZOOM_SECRET_TOKEN=abc123XXXXXXXXXX
-   PORT=3000
-   WORD_THRESHOLD=100
-   ```
-
-3. Launch the Auth Server by clicking below:
+1. Launch the Auth Server by clicking below:
    
 | Render |
 |:-:|
 | [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/zoom/zoom-rtms-sentiment-sample)
 
-4. Retrieve the Auth URL from the deployed Blueprint and input it into the `.env` file. You can also you an Auth URL of another service of your choice.
+2. Retrieve the Auth URL from the deployed Blueprint and input it into the `.env` file. You can also you an Auth URL of another service of your choice.
 
-5. Run the app:
+3. Install the dependencies:
+   `bun install # or npm install`
+   
+4. Run the app:
    `npm run app` or `bun app`
    
 ## Usage
