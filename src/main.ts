@@ -1,15 +1,11 @@
 import ZoomVideo, { event_peer_video_state_change, RealTimeMediaStreamsStatus, VideoPlayer, VideoQuality, RealTimeMediaStreamsClient, VideoClient } from "@zoom/videosdk";
-import { generateSignature } from "./utils";
 import "./style.css";
 import Toastify from 'toastify-js';
 import "toastify-js/src/toastify.css";
 
 const loader: string = '<div id="rtms-start-loader" class="flex justify-center"><div class="h-6 w-6 mr-[5px] animate-spin rounded-full border-4 border-solid border-white border-t-transparent"></div>';
 
-// !!You should sign your JWT with a backend service in a production use-case!!
-const sdkKey = import.meta.env.VITE_SDK_KEY as string;
-const sdkSecret = import.meta.env.VITE_SDK_SECRET as string;
-
+const authUrl: string | undefined = import.meta.env.VITE_AUTH_URL
 const videoContainer = document.querySelector('video-player-container') as HTMLElement;
 const sessionName: string = "TestOne";
 const role: number = 1;
@@ -22,10 +18,23 @@ const RTMSClient = client.getRealTimeMediaStreamsClient() as typeof RealTimeMedi
 let RTMSStatus: RealTimeMediaStreamsStatus | null = null;
 
 const startCall = async () => {
-    const token = generateSignature(sessionName, role, sdkKey, sdkSecret);
+     let settings = {
+      method: 'POST',
+      headers: {
+        "Content-Type": 'application/json'
+      },
+      body: JSON.stringify({
+        sessionName,
+        role
+      })
+    };
+
+    const { jwtToken } = await ((await fetch(authUrl + "/jwt", settings)).json());
+    console.log(jwtToken)
+    //generateSignature(sessionName, role, sdkKey, sdkSecret);
     client.on("peer-video-state-change", renderVideo);
 
-    await client.join(sessionName, token, username);
+    await client.join(sessionName, jwtToken, username);
     const mediaStream = client.getMediaStream();
     if (!mediaStream.isSupportVideoProcessor()) alert("Your browser does not support video processor");
     await mediaStream.startAudio({mute: false});
@@ -160,7 +169,7 @@ const pauseRTMSBtn = document.getElementById('pause-rtms-btn') as HTMLButtonElem
 const resumeRTMSBtn = document.getElementById('resume-rtms-btn') as HTMLButtonElement; 
 
 startBtn.addEventListener("click", async () => {
-    if (!sdkKey || !sdkSecret) {
+    if (!authUrl) {
         alert("Please enter SDK Key and SDK Secret in the .env file");
         return;
     }

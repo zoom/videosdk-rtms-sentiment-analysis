@@ -4,13 +4,15 @@ import express from 'express';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import WebSocket from 'ws';
+import cors from 'cors';
+import KJUR from 'jsrsasign';
 import { runDetection, trainModel } from './public/transcript-sentiment.js';
 
 dotenv.config({ quiet: true });
 const PORT = process.env.PORT || 3000;
 const ZoomSecretToken = process.env.ZOOM_SECRET_TOKEN;
-const ZoomClientId = process.env.VITE_SDK_KEY;
-const ZoomClientSecret = process.env.VITE_SDK_SECRET;
+const ZoomClientId = process.env.ZOOM_VIDEO_SDK_KEY;
+const ZoomClientSecret = process.env.ZOOM_VIDEO_SDK_SECRET;
 const WordThreshold = parseInt(process.env.WORD_THRESHOLD || '100');
 let transcriptBuffer = "";
 
@@ -24,12 +26,34 @@ if (!ZoomClientId || !ZoomClientSecret || !ZoomSecretToken) {
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 await trainModel(250, 50);
 
 function generateSignature(sessionID, streamId) {
   const message = `${ZoomClientId},${sessionID},${streamId}`;
   return crypto.createHmac('sha256', ZoomClientSecret).update(message).digest('hex');
+}
+
+function generateJWT(sessionName, role) {
+  const iat = Math.round(new Date().getTime() / 1000) - 30;
+  const exp = iat + 60 * 60 * 2;
+  const oHeader = { alg: "HS256", typ: "JWT" };
+
+  const oPayload = {
+    app_key: ZoomClientId,
+    tpc: sessionName,
+    role_type: role,
+    version: 1,
+    iat: iat,
+    exp: exp,
+  };
+
+  const sHeader = JSON.stringify(oHeader);
+  const sPayload = JSON.stringify(oPayload);
+  const sdkJWT = KJUR.KJUR.jws.JWS.sign("HS256", sHeader, sPayload, ZoomClientSecret);
+  console.log(sdkJWT)
+  return sdkJWT;
 }
 
 function connectToSignalingWebSocket(session_id, rtmsStreamId, serverUrls) {
@@ -149,6 +173,12 @@ app.post('/webhook', (req, res) => {
   } else {
     console.log('Unknown event:', event);
   }
+});
+
+
+app.post("/jwt", (req, res) => {
+   const {sessionName, role} = req.body;
+   res.status(200).send({jwtToken: generateJWT(sessionName, role)});
 });
 
 const server = http.createServer(app);

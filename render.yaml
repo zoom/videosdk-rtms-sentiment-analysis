@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: Zoom Sentiment Analysis with RTMS and Tensorflow
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm run server
+    repo:  https://github.com/zoom/zoom-rtms-sentiment-sample
+    rootDir: .
+    plan: free
+    envVars:
+      - key: ZOOM_VIDEO_SDK_KEY
+        sync: false
+      - key: ZOOM_VIDEO_SDK_SECRET
+        sync: false

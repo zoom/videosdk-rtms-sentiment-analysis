@@ -1,5 +1,4 @@
 import KJUR from "jsrsasign";
-import { Canvas, FabricText } from "fabric";
 
 // You should sign your JWT with a backend service in a production use-case
 export function generateSignature(sessionName: string, role: number, sdkKey: string, sdkSecret: string) {
