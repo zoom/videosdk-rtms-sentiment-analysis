@@ -6,15 +6,16 @@ import dotenv from 'dotenv';
 import WebSocket from 'ws';
 import cors from 'cors';
 import KJUR from 'jsrsasign';
+import util from "util";
 import { runDetection, trainModel } from './public/transcript-sentiment.js';
+import rtms from "@zoom/rtms";
 
 dotenv.config({ quiet: true });
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3012;
 const ZoomSecretToken = process.env.ZOOM_SECRET_TOKEN;
 const ZoomClientId = process.env.ZOOM_VIDEO_SDK_KEY;
 const ZoomClientSecret = process.env.ZOOM_VIDEO_SDK_SECRET;
-const WordThreshold = parseInt(process.env.WORD_THRESHOLD || '100');
-let transcriptBuffer = "";
+const WordThreshold = parseInt(process.env.WORD_THRESHOLD || '35');
 
 if (!ZoomClientId || !ZoomClientSecret || !ZoomSecretToken) {
   console.error('Missing required environment variables:');
@@ -24,16 +25,43 @@ if (!ZoomClientId || !ZoomClientSecret || !ZoomSecretToken) {
   process.exit(1);
 }
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
 await trainModel(250, 50);
 
-function generateSignature(sessionID, streamId) {
-  const message = `${ZoomClientId},${sessionID},${streamId}`;
-  return crypto.createHmac('sha256', ZoomClientSecret).update(message).digest('hex');
-}
+const app = express();
+app.use(cors());
+
+// Create a webhook handler that can be mounted on your existing server
+const webhookHandler = rtms.createWebhookHandler(
+    (payload) => {
+        console.log(`Received webhook: ${util.inspect(payload, {depth: null, colors: true })}`);
+
+        if (payload.event === "session.rtms_started") {
+            const client = new rtms.Client();
+            const { session_id, rtms_stream_id, server_urls } = payload.payload;
+
+            client.onTranscriptData((buffer, size, timestamp, metadata) => {
+              const text = buffer.toString('utf8');
+              console.log(`Transcript from ${metadata.userName}: ${text}`);
+              if (text.length > WordThreshold) {
+                runDetection(text);
+              }
+            });
+
+            client.join({
+              client: ZoomClientId,
+              secret: ZoomClientSecret,
+              session_id,
+              rtms_stream_id,
+              server_urls,
+            });
+        }
+    },
+    '/zoom/webhook'
+);
+
+app.post('/zoom/webhook', webhookHandler);
+app.use(express.json());
+
 
 function generateJWT(sessionName, role) {
   const iat = Math.round(new Date().getTime() / 1000) - 30;
@@ -52,129 +80,13 @@ function generateJWT(sessionName, role) {
   const sHeader = JSON.stringify(oHeader);
   const sPayload = JSON.stringify(oPayload);
   const sdkJWT = KJUR.KJUR.jws.JWS.sign("HS256", sHeader, sPayload, ZoomClientSecret);
-  console.log(sdkJWT)
   return sdkJWT;
-}
-
-function connectToSignalingWebSocket(session_id, rtmsStreamId, serverUrls) {
-  const signalingWs = new WebSocket(serverUrls, [], { rejectUnauthorized: false });
-  signalingWs.on('open', () => {
-    try {
-      const handshakeMsg = {
-        msg_type: 1,
-        meeting_uuid: session_id,
-        session_id,
-        rtms_stream_id: rtmsStreamId,
-        signature: generateSignature(session_id, rtmsStreamId)
-      };
-
-      signalingWs.send(JSON.stringify(handshakeMsg));
-    } catch (err) {
-      console.error(`[Signaling] Error in WebSocket open handler for ${session_id}: ${err}`);
-      signalingWs.close();
-    }
-  });
-
-  signalingWs.on('message', (data) => {
-    const msg = JSON.parse(data.toString());
-    if (msg.msg_type === 12) { // KEEP_ALIVE_REQ
-      signalingWs.send(JSON.stringify({
-        msg_type: 13, // KEEP_ALIVE_RESP
-        timestamp: msg.timestamp
-      }));
-    }
-    else if (msg.msg_type === 2) {
-      if (msg.status_code === 0) {
-        const mediaUrl = msg.media_server?.server_urls?.audio;
-        connectToMediaWebSocket(mediaUrl, session_id, rtmsStreamId, signalingWs);
-      }
-    }
-  });
-
-  signalingWs.on('error', (error) => {
-    console.error('Signaling WebSocket error:', error);
-  });
-
-  signalingWs.on('close', (code, reason) => {
-    console.log('Signaling WebSocket closed:', code, reason);
-  });
-}
-
-function connectToMediaWebSocket(mediaUrl, session_id, rtmsStreamId, signalingSocket) {
-  const mediaWs = new WebSocket(mediaUrl, [], { rejectUnauthorized: false });
-
-  mediaWs.on('open', () => {
-    const handshakeMsg = {
-      msg_type: 3, // DATA_HAND_SHAKE_REQ
-      protocol_version: 1,
-      sequence: 0,
-      meeting_uuid: session_id,
-      rtms_stream_id: rtmsStreamId,
-      signature: generateSignature(session_id, rtmsStreamId),
-      media_type: 8, // Request only transcript (TEXT enum)
-    };
-
-    mediaWs.on('message', (data) => {
-      const msg = JSON.parse(data.toString());
-      if (msg.msg_type === 17)  // TRANSCRIPT
-      {
-        console.log('Transcript data received', msg.content?.data);
-        if (msg.content?.data) {
-          transcriptBuffer += msg.content.data;
-          if (transcriptBuffer.length > WordThreshold) {
-            runDetection(msg.content.data).then(() => {
-              transcriptBuffer = "";
-            });
-          }
-        }
-      }
-      else if (msg.msg_type === 4 && msg.status_code === 0) {
-        signalingSocket.send(JSON.stringify({
-          msg_type: 7, // CLIENT_READY_ACK
-          rtms_stream_id: rtmsStreamId
-        }));
-      }
-      else if (msg.msg_type === 12) { // KEEP_ALIVE_REQ
-        mediaWs.send(JSON.stringify({
-          msg_type: 13, // KEEP_ALIVE_ACK
-          timestamp: msg.timestamp
-        }));
-      }
-    });
-    mediaWs.send(JSON.stringify(handshakeMsg));
-  });
 }
 
 app.get('/', (req, res) => {
   console.log('Root endpoint hit');
   res.send('RTMS for Video SDK Sample Server Running.');
 });
-
-app.post('/webhook', (req, res) => {
-  const { event, payload } = req.body;
-  if (event === 'endpoint.url_validation' && payload?.plainToken) {
-    const hash = crypto.createHmac('sha256', ZoomSecretToken).update(payload.plainToken).digest('hex');
-    return res.json({
-      plainToken: payload.plainToken,
-      encryptedToken: hash,
-    });
-  }
-
-  // Send response immediately, then process the event
-  res.sendStatus(200);
-
-  if (event === 'session.rtms_started') {
-    const { session_id, rtms_stream_id, server_urls } = payload;
-    console.log("Starting RTMS for session:", { payload });
-    connectToSignalingWebSocket(session_id, rtms_stream_id, server_urls);
-  } else if (event === 'session.rtms_stopped') {
-    const { session_id } = payload;
-    console.log(`Stopping RTMS for Video session ${session_id}`);
-  } else {
-    console.log('Unknown event:', event);
-  }
-});
-
 
 app.post("/jwt", (req, res) => {
    const {sessionName, role} = req.body;

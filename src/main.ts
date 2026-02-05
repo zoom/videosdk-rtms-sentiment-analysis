@@ -7,7 +7,7 @@ const loader: string = '<div id="rtms-start-loader" class="flex justify-center">
 
 const authUrl: string | undefined = import.meta.env.VITE_AUTH_URL
 const videoContainer = document.querySelector('video-player-container') as HTMLElement;
-const sessionName: string = "TestOne";
+const sessionName: string = "TestOe";
 const role: number = 1;
 const username: string = `User-${String(new Date().getTime()).slice(6)}`;
 
@@ -78,7 +78,7 @@ const displayToast = (message: string) => {
         }).showToast();
 };
 
-const updateControlsUI = async() => {
+const updateControlsUI = async () => {
     RTMSStatus = RTMSClient.getRealTimeMediaStreamsStatus();
 
     console.log("RTMS Status:", RTMSStatus);
@@ -126,6 +126,7 @@ const updateControlsUI = async() => {
             displayToast("RTMS Stopped");
             startRTMSBtn.innerHTML = "Start RTMS";
             startRTMSBtn.style.display = "block";
+            startRTMSBtn.disabled = false;
             stopRTMSBtn.style.display = "none";
             pauseRTMSBtn.style.display = "none";
             resumeRTMSBtn.style.display = "none";
@@ -136,13 +137,16 @@ const updateControlsUI = async() => {
 const startRTMSSession = async () => {
     if (!RTMSClient.isSupportRealTimeMediaStreams()) {      
         displayToast("RTMS not supported. Contact Support to enable.");
+        return;
     } else if (!RTMSClient.canStartRealTimeMediaStreams()) {
         displayToast("RTMS cannot be started by this user");
+        return;
     }
     startRTMSBtn.innerHTML = loader;
     startRTMSBtn.disabled = true;
     await RTMSClient.startRealTimeMediaStreams();
     updateControlsUI();
+    displayToast("Starting RTMS. Check Server for logs");
 };
 const stopRTMSSession = async () => {
     await RTMSClient.stopRealTimeMediaStreams();

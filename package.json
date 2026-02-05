@@ -39,7 +39,7 @@
   "dependencies": {
     "@tensorflow/tfjs-node": "^4.22.0",
     "@types/jsrsasign": "^10.5.13",
-    "@zoom/rtms": "^0.0.7",
+    "@zoom/rtms": "^1.0.2",
     "@zoom/videosdk": "^2.3.5",
     "concurrently": "^8.2.2",
     "cors": "^2.8.6",
@@ -54,6 +54,7 @@
     "tfjs": "^0.6.0",
     "toastify-js": "^1.12.0",
     "url": "^0.11.4",
+    "util": "^0.12.5",
     "ws": "^8.18.3"
   }
 }
