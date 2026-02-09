@@ -7,7 +7,7 @@ const loader: string = '<div id="rtms-start-loader" class="flex justify-center">
 
 const authUrl: string | undefined = import.meta.env.VITE_AUTH_URL
 const videoContainer = document.querySelector('video-player-container') as HTMLElement;
-const sessionName: string = "TestOe";
+const sessionName: string = "TestOne";
 const role: number = 1;
 const username: string = `User-${String(new Date().getTime()).slice(6)}`;
 
