@@ -4,6 +4,8 @@ Use of this sample app is subject to our [Terms of Use](https://explore.zoom.us/
 
 The [Zoom Video SDK for Web](https://developers.zoom.us/docs/video-sdk/web/) enables you to build custom video experiences on a webpage with Zoom's core technology. This demo showcases how to use [Video SDK RTMS Streams](https://developers.zoom.us/docs/rtms/video-sdk/) to receive real-time transcripts from Zoom on your backend server. The server then runs a Tensorflow model for Sentiment Analysis on the transcript and outputs the result to the server console.
 
+There is also a [Client-side](https://github.com/zoom/videosdk-LTT-sentiment-analysis.git) version of this app that uses Zoom Live Transcriptions and Video Preprocessor.
+
 ## Installation
 
 To get started, clone the repo:
